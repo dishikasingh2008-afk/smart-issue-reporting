@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String               @id @default(cuid())
+  name           String
+  email          String               @unique
+  password       String
+  role           Role                 @default(STUDENT)
+  createdAt      DateTime             @default(now())
+  pollVotes PollVote[]
+  upvotesGiven   IssueUpvote[]        @relation("UpvotesGiven")
+  ratingsGiven   Rating[]             @relation("RatingsGiven")
+  updatedAt      DateTime             @updatedAt
+  assignedIssues Issue[]              @relation("AssignedIssues")
+  reportedIssues Issue[]              @relation("ReportedIssues")
+  statusChanges  IssueStatusHistory[] @relation("ChangedBy")
+  notifications  Notification[]
+}
+
+model Issue {
+  id             String               @id @default(cuid())
+  title          String
+  description    String
+  category       String
+  priority       Priority             @default(LOW)
+  priorityReason String?
+  status         IssueStatus          @default(REPORTED)
+  building       String
+  floor          String
+  room           String?
+  area           String?
+  latitude       Float?
+  longitude      Float?
+  imageUrl       String?
+  reporterId     String
+  upvotes        IssueUpvote[]
+  rating         Rating?
+  assignedToId   String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  resolvedAt     DateTime?
+  assignedTo     User?                @relation("AssignedIssues", fields: [assignedToId], references: [id])
+  reporter       User                 @relation("ReportedIssues", fields: [reporterId], references: [id])
+  statusHistory  IssueStatusHistory[]
+  notifications  Notification[]
+}
+
+model IssueStatusHistory {
+  id          String       @id @default(cuid())
+  issueId     String
+  oldStatus   IssueStatus?
+  newStatus   IssueStatus
+  comment     String?
+  changedById String
+  createdAt   DateTime     @default(now())
+  changedBy   User         @relation("ChangedBy", fields: [changedById], references: [id])
+  issue       Issue        @relation(fields: [issueId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  issueId   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  issue     Issue?   @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum IssueStatus {
+  REPORTED
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model IssueUpvote {
+  id        String   @id @default(cuid())
+  issueId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  issue Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  user  User  @relation("UpvotesGiven", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([issueId, userId])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  issueId   String   @unique
+  studentId String
+  stars     Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  issue   Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  student User  @relation("RatingsGiven", fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model Poll {
+  id        String       @id @default(cuid())
+  question  String
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  options   PollOption[]
+  votes     PollVote[]
+}
+
+model PollOption {
+  id     String     @id @default(cuid())
+  text   String
+  pollId String
+  poll   Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes  PollVote[]
+}
+
+model PollVote {
+  id        String     @id @default(cuid())
+  pollId    String
+  optionId  String
+  userId    String
+  createdAt DateTime   @default(now())
+
+  poll   Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  option PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId])
+}
