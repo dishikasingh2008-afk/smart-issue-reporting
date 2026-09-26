@@ -40,14 +40,18 @@ const SAMPLE_ISSUES: Array<{
 async function main() {
   console.log('Seeding database...');
 
-  const adminPassword = await bcrypt.hash('Admin@123', 10);
+  const adminPassword = await bcrypt.hash(process.env.ADMIN_SEED_PASSWORD || '1234567890!', 10);
   const studentPassword = await bcrypt.hash('Student@123', 10);
-
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@campus.com' },
-    update: {},
-    create: { name: 'Campus Admin', email: 'admin@campus.com', password: adminPassword, role: 'ADMIN' },
-  });
+  where: { email: process.env.ADMIN_SEED_EMAIL || 'admin@campus.com' },
+  update: {},
+  create: {
+    name: 'Admin',
+    email: process.env.ADMIN_SEED_EMAIL || 'admin@campus.com',
+    password: adminPassword,
+    role: 'ADMIN',
+  },
+});
 
   const student = await prisma.user.upsert({
     where: { email: 'student@campus.com' },
@@ -121,7 +125,6 @@ async function main() {
   }
 
   console.log('Seed complete.');
-  console.log('Demo admin login: admin@campus.com / Admin@123');
   console.log('Demo student login: student@campus.com / Student@123');
 }
 

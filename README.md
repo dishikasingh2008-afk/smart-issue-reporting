@@ -1,3 +1,4 @@
+
 # Smart Campus Issue Reporting System
 
 A full-stack web application where students can report campus issues (damaged furniture,
@@ -8,7 +9,7 @@ engine, and every status change is tracked and shown to the student.
 > **New to coding?** Don't worry — this README explains every single step, in order,
 > assuming you have never run a Node.js project before. Follow it top to bottom.
 
----
+
 
 ## 1. What's inside
 
@@ -49,7 +50,7 @@ changing any other code (see `backend/src/services/categorization.ts`).
 - **Campus Fixes Leaderboard** (`/leaderboard`) — credits reward getting issues resolved, upvoting real problems, and rating fixes (not just filing complaints), with badges (🛠️ Problem Solver, 🌱 Clean Campus, 💡 Safety Watch, 🏆 Campus Contributor).
 - **Student Polls** (`/polls` for students, `/admin/polls` to manage) — admins post recurring campus-decision polls; students vote once and see live percentages.
 
----
+
 
 ## 3. Requirements (install these first)
 
@@ -73,7 +74,7 @@ You need three things installed on your computer:
 
 You do **not** need to install PostgreSQL separately — Docker will run it for you.
 
----
+
 
 ## 4. Step-by-step setup
 
@@ -140,7 +141,7 @@ terminal running too.
 
 Go to **http://localhost:5173** in your browser. You should see the landing page.
 
----
+
 
 ## 5. Demo credentials
 
@@ -155,7 +156,7 @@ change them before deploying anywhere real):
 15+ sample issues across all categories and statuses are pre-loaded so the dashboards
 and lists aren't empty when you first log in.
 
----
+
 
 ## 6. Trying it out
 
@@ -170,7 +171,7 @@ and lists aren't empty when you first log in.
 5. As admin, check "Analytics" for charts of issues by category, status, priority,
    building, and over time.
 
----
+
 
 ## 7. Environment variables
 
@@ -189,7 +190,7 @@ and lists aren't empty when you first log in.
 |---|---|
 | `VITE_API_URL` | Base URL of the backend API (default `http://localhost:5000/api`) |
 
----
+
 
 ## 8. Database schema (Prisma models)
 
@@ -204,7 +205,7 @@ and lists aren't empty when you first log in.
 
 See `backend/prisma/schema.prisma` for the full definitions with relationships.
 
----
+
 
 ## 9. API documentation
 
@@ -244,7 +245,6 @@ you're logged in).
 
 All responses follow `{ success: boolean, data?, message?, pagination? }`.
 
----
 
 ## 10. Troubleshooting
 
@@ -262,7 +262,7 @@ All responses follow `{ success: boolean, data?, message?, pagination? }`.
 - **Want a clean slate?** Run `npm run prisma:seed` again in `backend/` — it clears and
   recreates all issues/notifications/history (it does not delete users).
 
----
+
 
 ## 11. Future improvements
 
@@ -274,7 +274,7 @@ All responses follow `{ success: boolean, data?, message?, pagination? }`.
 - Add map-based location picking using the existing `latitude`/`longitude` fields.
 - Add refresh tokens / token rotation for longer-lived sessions.
 
----
+
 
 ## 12. Security notes
 
@@ -284,3 +284,4 @@ calling admin-only endpoints. Uploads are validated for file type and size on bo
 frontend and backend. `helmet` and `cors` are enabled, and login/register endpoints are
 rate-limited. No secrets are committed — copy `.env.example` to `.env` and fill in real
 values before deploying anywhere.
+
